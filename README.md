@@ -1,5 +1,9 @@
 # Fastest Biker Oslo
 
+Work in progress. 
+
+Find the fastest Oslo City Biker between station A and station B.
+
 ## :fast_forward: tl;dr
 
 __Development:__
