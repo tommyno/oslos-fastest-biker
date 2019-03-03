@@ -1,0 +1,48 @@
+{
+  "name": "oslo-bysykkel",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "axios": "^0.18.0",
+    "babel-cli": "^6.23.0",
+    "babel-core": "^6.23.1",
+    "babel-polyfill": "^6.23.0",
+    "babel-preset-es2015": "^6.22.0",
+    "babel-preset-stage-0": "^6.22.0",
+    "body-parser": "^1.18.2",
+    "concurrently": "^3.5.1",
+    "connect-history-api-fallback": "^1.5.0",
+    "cors": "^2.8.4",
+    "date-fns": "^1.29.0",
+    "dotenv": "^5.0.1",
+    "express": "^4.16.3",
+    "nodemon": "^1.17.3",
+    "react": "^16.3.2",
+    "react-dom": "^16.3.2",
+    "react-scripts": "1.1.4",
+    "react-select": "^1.2.1",
+    "sort-by": "^1.2.0"
+  },
+  "scripts": {
+    "cloud:start": "node ./scripts/start.js",
+    "cloud:build": "node ./scripts/build.js",
+    "frontend:dev": "react-scripts start",
+    "frontend:start": "node ./src/frontend/server.js",
+    "frontend:build": "node ./node_modules/react-scripts/bin/react-scripts.js build",
+    "backend:dev": "nodemon ./src/backend/start.js",
+    "backend:start": "node ./src/backend/start.js",
+    "backend:build": "echo \"no build required\"",
+    "dev": "concurrently \"npm run frontend:dev\" \"npm run backend:dev\"",
+    "start": "npm run cloud:start",
+    "build": "concurrently \"npm run frontend:build\" \"npm run backend:build\"",
+    "postinstall": "npm run cloud:build",
+    "test": "node ./node_modules/react-scripts/bin/react-scripts.js test --env=jsdom",
+    "eject": "react-scripts eject"
+  },
+  "babel": {
+    "presets": [
+      "es2015",
+      "stage-0"
+    ]
+  }
+}
