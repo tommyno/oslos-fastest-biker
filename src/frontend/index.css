@@ -3,3 +3,17 @@ body {
   padding: 0;
   font-family: sans-serif;
 }
+
+.wrap {
+  display: flex;
+  min-height: 100vh;
+}
+
+.col-50 {
+  flex-basis: 50%;
+  min-height: 100%;
+}
+
+.settings {
+  padding: 0 16px;
+}
