@@ -1,40 +1,34 @@
-import React, { Component, Fragment } from 'react';
+import React, { Fragment } from 'react';
 import ReactMapboxGl, { Layer, Feature, ZoomControl, Popup } from 'react-mapbox-gl';
 
 const MAPBOX_TOKEN = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
 
-// Se demo a la bysykkel her: http://alex3165.github.io/react-mapbox-gl/demos
+// Create map
 const BicycleStationMap = ReactMapboxGl({
   accessToken: MAPBOX_TOKEN,
 });
 
-class Map extends Component {
-  state = {
-    selectedStation: null, // index
-    zoomLevel: 12,
-    center: ['10.7522', '59.9139'],
-  };
+const Map = props => {
+  const {
+    stations,
+    mapSettings: { selectedStation, zoomLevel, center },
+    handleMapMarkerClick,
+  } = props;
 
-  // Show click cursor and add station to state
-  handleMarkerHover(e, index) {
+  console.log('load map');
+
+  // Change cursor icon on map marker hover
+  const handleMarkerHover = e => {
     if (!e.type) return;
     if (e.type === 'mouseenter') {
       e.map.getCanvas().style.cursor = 'pointer';
     } else if (e.type === 'mouseleave') {
       e.map.getCanvas().style.cursor = '';
     }
-  }
+  };
 
-  handleMarkerClick(e, index) {
-    const {
-      center: { longitude, latitude },
-    } = this.props.stations[index];
-    this.setState({ selectedStation: index, zoomLevel: 14, center: [longitude, latitude] });
-  }
-
-  renderPopup() {
-    const { stations } = this.props;
-    const { selectedStation } = this.state;
+  // Show popup on map
+  const renderPopup = () => {
     const {
       title,
       subtitle,
@@ -51,52 +45,46 @@ class Map extends Component {
         </Popup>
       </Fragment>
     );
-  }
+  };
 
-  render() {
-    const { stations } = this.props;
-    const { selectedStation, zoomLevel, center } = this.state;
-
-    return (
-      <BicycleStationMap
-        // eslint-disable-next-line
-        style={'mapbox://styles/mapbox/streets-v9'}
-        zoom={[zoomLevel]}
-        center={center}
-        containerStyle={{
-          height: '100%',
-          width: '100%',
-        }}
-      >
-        <Layer type="symbol" id="marker" layout={{ 'icon-image': 'bicycle-15' }}>
-          {stations.map((station, index) => {
-            const {
-              id,
-              center: { latitude, longitude },
-            } = station;
-            return (
-              <Feature
-                key={id}
-                coordinates={[longitude, latitude]}
-                testProp="yolo"
-                onMouseEnter={e => {
-                  this.handleMarkerHover(e, index);
-                }}
-                onMouseLeave={e => {
-                  this.handleMarkerHover(e, index);
-                }}
-                onClick={e => {
-                  this.handleMarkerClick(e, index);
-                }}
-              />
-            );
-          })}
-        </Layer>
-        {selectedStation && this.renderPopup()}
-        <ZoomControl />
-      </BicycleStationMap>
-    );
-  }
-}
+  return (
+    <BicycleStationMap
+      // eslint-disable-next-line
+      style={'mapbox://styles/mapbox/streets-v9'}
+      zoom={[zoomLevel]}
+      center={center}
+      containerStyle={{
+        height: '100%',
+        width: '100%',
+      }}
+    >
+      <Layer type="symbol" id="marker" layout={{ 'icon-image': 'bicycle-15' }}>
+        {stations.map((station, index) => {
+          const {
+            id,
+            center: { latitude, longitude },
+          } = station;
+          return (
+            <Feature
+              key={id}
+              coordinates={[longitude, latitude]}
+              onMouseEnter={e => {
+                handleMarkerHover(e);
+              }}
+              onMouseLeave={e => {
+                handleMarkerHover(e);
+              }}
+              onClick={e => {
+                handleMapMarkerClick(e, index);
+              }}
+            />
+          );
+        })}
+      </Layer>
+      {selectedStation && renderPopup()}
+      <ZoomControl />
+    </BicycleStationMap>
+  );
+};
 
 export default Map;

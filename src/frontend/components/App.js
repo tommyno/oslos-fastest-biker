@@ -17,6 +17,11 @@ class App extends Component {
     selectedStartStation: null,
     selectedEndStation: null,
     highscoreResults: [],
+    mapSettings: {
+      selectedStation: null, // stations index
+      zoomLevel: 12,
+      center: ['10.7522', '59.9139'],
+    },
   };
 
   async componentDidMount() {
@@ -96,6 +101,15 @@ class App extends Component {
     });
   };
 
+  handleMapMarkerClick = (e, index) => {
+    const {
+      center: { longitude, latitude },
+    } = this.state.stations[index];
+    this.setState({
+      mapSettings: { selectedStation: index, zoomLevel: 14, center: [longitude, latitude] },
+    });
+  };
+
   render() {
     const { stationOptions, selectedStartStation, selectedEndStation, highscoreResults } = this.state;
 
@@ -118,7 +132,7 @@ class App extends Component {
               </span>
             </h2>
             <p>Fastest biker!</p>
-            Start:
+            Start: {this.state.mapSettings.selectedStation}
             <br />
             <Select
               name="form-field-name"
@@ -157,7 +171,11 @@ class App extends Component {
           </div>
         </div>
         <div className="col-50">
-          <Map stations={this.state.stations} />
+          <Map
+            stations={this.state.stations}
+            mapSettings={this.state.mapSettings}
+            handleMapMarkerClick={this.handleMapMarkerClick}
+          />
         </div>
       </div>
     );
