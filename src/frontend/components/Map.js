@@ -8,7 +8,7 @@ const BicycleStationMap = ReactMapboxGl({
   accessToken: MAPBOX_TOKEN,
 });
 
-const Map = props => {
+const Map = React.memo(function Map(props) {
   const {
     stations,
     mapSettings: { selectedStation, zoomLevel, center },
@@ -74,8 +74,8 @@ const Map = props => {
               onMouseLeave={e => {
                 handleMarkerHover(e);
               }}
-              onClick={e => {
-                handleMapMarkerClick(e, index);
+              onClick={() => {
+                handleMapMarkerClick(index);
               }}
             />
           );
@@ -85,6 +85,6 @@ const Map = props => {
       <ZoomControl />
     </BicycleStationMap>
   );
-};
+});
 
 export default Map;

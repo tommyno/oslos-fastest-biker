@@ -69,9 +69,9 @@ class App extends Component {
   handlePopulateStationOptions() {
     const stations = this.state.stations;
     const stationOptions = stations
-      .map(function(station) {
+      .map(function(station, index) {
         return {
-          value: station.id,
+          value: index,
           label: `${station.title} (${station.subtitle})`,
         };
       })
@@ -101,13 +101,20 @@ class App extends Component {
     });
   };
 
-  handleMapMarkerClick = (e, index) => {
+  handleMapMarkerClick = index => {
+    const { selectedStartStation, stations } = this.state;
     const {
       center: { longitude, latitude },
-    } = this.state.stations[index];
+    } = stations[index];
     this.setState({
       mapSettings: { selectedStation: index, zoomLevel: 14, center: [longitude, latitude] },
     });
+
+    if (selectedStartStation === null) {
+      this.setState({ selectedStartStation: index });
+    } else {
+      this.setState({ selectedEndStation: index });
+    }
   };
 
   render() {
@@ -132,7 +139,7 @@ class App extends Component {
               </span>
             </h2>
             <p>Fastest biker!</p>
-            Start: {this.state.mapSettings.selectedStation}
+            Start:
             <br />
             <Select
               name="form-field-name"
