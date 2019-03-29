@@ -133,12 +133,11 @@ class App extends Component {
         <div className="col-50">
           <div className="settings">
             <h2>
-              Oslo bysykkel API{' '}
+              Oslos fastest biker!{' '}
               <span role="img" aria-label="Bicycle">
                 🚲
               </span>
             </h2>
-            <p>Fastest biker!</p>
             Start:
             <br />
             <Select
