@@ -1,0 +1,17 @@
+$fontPath: '../assets/fonts';
+
+@font-face {
+  font-family: 'Press Start 2P';
+  src: url('#{$fontPath}/PressStart2P/PressStart2P.woff2') format('woff2'),
+    url('#{$fontPath}/PressStart2P/PressStart2P.woff') format('woff');
+  font-weight: 500;
+  font-style: normal;
+}
+
+body {
+  font-family: sans-serif;
+}
+
+.font--arcade {
+  font-family: 'Press Start 2P';
+}

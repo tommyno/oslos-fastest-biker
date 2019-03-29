@@ -5,10 +5,12 @@ import { format } from 'date-fns';
 import nb from 'date-fns/locale/nb';
 
 import humanizeDuration from '../../shared/utils/humanize-duration';
-import './App.css';
-import Map from './Map';
-import 'react-select/dist/react-select.css';
 import { getBysykkelStations, getHighscoreByStations } from '../services/backend-api';
+
+import Map from './Map';
+import HighScore from './HighScore';
+
+import 'react-select/dist/react-select.css';
 
 class App extends Component {
   state = {
@@ -160,12 +162,7 @@ class App extends Component {
             />
             <h3>Distance</h3>
             <p>0,46 km</p>
-            <h3>
-              High score{' '}
-              <span role="img" aria-label="Clock">
-                ⏱️
-              </span>
-            </h3>
+            <HighScore />
             <ul>{highscoreResultsElements}</ul>
             {/* 
             <h3>All time fastest average ⚡</h3>
