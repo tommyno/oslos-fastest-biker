@@ -5,15 +5,15 @@ const backendApi = axios.create({
   baseURL: apiUrl,
 });
 
-export async function getBysykkelStations () {
-  const {data} = await backendApi.get('/stations');
+export async function getBysykkelStations() {
+  const { data } = await backendApi.get('/stations');
   return data;
 }
 
-export async function getHighscoreByStations (startStation, endStation) {
-  const {data} = await backendApi.post('/highscore', {
+export async function getHighscoreByStations(startStation, endStation) {
+  const { data } = await backendApi.post('/highscore', {
     startStation,
-    endStation
+    endStation,
   });
   return data;
 }

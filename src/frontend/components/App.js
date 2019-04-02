@@ -64,7 +64,9 @@ class App extends Component {
   // Get all stations
   async getAllStations() {
     const stations = await getBysykkelStations();
-    this.setState({ stations });
+    if (stations) {
+      this.setState({ stations });
+    }
   }
 
   // Show stations in dropdown
@@ -74,7 +76,7 @@ class App extends Component {
       .map(function(station, index) {
         return {
           value: index,
-          label: `${station.title} (${station.subtitle})`,
+          label: `${station.name}`,
         };
       })
       .sort(sortBy('label'));
@@ -105,11 +107,9 @@ class App extends Component {
 
   handleMapMarkerClick = index => {
     const { selectedStartStation, stations } = this.state;
-    const {
-      center: { longitude, latitude },
-    } = stations[index];
+    const { lon, lat } = stations[index];
     this.setState({
-      mapSettings: { selectedStation: index, zoomLevel: 14, center: [longitude, latitude] },
+      mapSettings: { selectedStation: index, zoomLevel: 14, center: [lon, lat] },
     });
 
     if (selectedStartStation === null) {
