@@ -15,12 +15,11 @@ import 'react-select/dist/react-select.css';
 class App extends Component {
   state = {
     stations: [],
-    stationOptions: [],
-    selectedStartStation: null,
-    selectedEndStation: null,
+    startStation: null,
+    endStation: null,
     highscoreResults: [],
     mapSettings: {
-      selectedStation: null, // stations index
+      selectedStation: null,
       zoomLevel: 12,
       center: ['10.7522', '59.9139'],
     },
@@ -28,7 +27,6 @@ class App extends Component {
 
   async componentDidMount() {
     await this.getAllStations();
-    this.handlePopulateStationOptions();
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -36,32 +34,30 @@ class App extends Component {
   }
 
   async handlePopulateHighscore(prevProps, prevState) {
-    const { selectedStartStation, selectedEndStation } = this.state;
+    const { startStation, endStation } = this.state;
 
-    const { selectedStartStation: prevSelectedStartStation, selectedEndStation: prevSelectedEndStation } = prevState;
+    const { startStation: prevStartStation, endStation: prevEndStation } = prevState;
 
     // Both stations should have a value
-    if (!selectedEndStation || !selectedEndStation) {
+    if (!startStation || !endStation) {
       return;
     }
 
     // Start and stop can not be the same
-    if (selectedStartStation === selectedEndStation) {
+    if (startStation === endStation) {
       return;
     }
 
     // Is there a change?
-    if (selectedStartStation === prevSelectedStartStation && selectedEndStation === prevSelectedEndStation) {
+    if (startStation === prevStartStation && endStation === prevEndStation) {
       return;
     }
 
-    console.log(Date.now() + ' changed');
-
-    const highscoreResults = await getHighscoreByStations(selectedStartStation, selectedEndStation);
+    const highscoreResults = await getHighscoreByStations(startStation, endStation);
     this.setState({ highscoreResults });
   }
 
-  // Get all stations
+  // Get all stations and sort by name
   async getAllStations() {
     const stations = await getBysykkelStations();
     if (stations) {
@@ -69,58 +65,50 @@ class App extends Component {
     }
   }
 
-  // Show stations in dropdown
-  handlePopulateStationOptions() {
-    const stations = this.state.stations;
-    const stationOptions = stations
-      .map(function(station, index) {
-        return {
-          value: index,
-          label: `${station.name}`,
-        };
-      })
-      .sort(sortBy('label'));
-    this.setState({ stationOptions });
-  }
-
   // Swap station A and B
   handleSwapClick = () => {
-    const { selectedStartStation, selectedEndStation } = this.state;
+    const { startStation, endStation } = this.state;
 
     // Both stations should have a value
-    if (!selectedEndStation || !selectedEndStation) {
+    if (!startStation || !endStation) {
       return;
     }
 
     // Start and stop can not be the same
-    if (selectedStartStation === selectedEndStation) {
+    if (startStation === endStation) {
       return;
     }
 
-    const prevSelectedStartStation = selectedStartStation;
-    const prevSelectedEndStation = selectedEndStation;
+    const prevStartStation = startStation;
+    const prevEndStation = endStation;
     this.setState({
-      selectedStartStation: prevSelectedEndStation,
-      selectedEndStation: prevSelectedStartStation,
+      startStation: prevEndStation,
+      endStation: prevStartStation,
     });
   };
 
-  handleMapMarkerClick = index => {
-    const { selectedStartStation, stations } = this.state;
-    const { lon, lat } = stations[index];
-    this.setState({
-      mapSettings: { selectedStation: index, zoomLevel: 14, center: [lon, lat] },
+  // Handle marker click on map
+  handleMapMarkerClick = id => {
+    const { startStation, stations } = this.state;
+
+    const selectedStation = stations.find(station => {
+      return station.station_id === id;
     });
 
-    if (selectedStartStation === null) {
-      this.setState({ selectedStartStation: index });
+    const { lon, lat } = selectedStation;
+    this.setState({
+      mapSettings: { selectedStation: id, zoomLevel: 14, center: [lon, lat] },
+    });
+
+    if (startStation === null) {
+      this.setState({ startStation: id });
     } else {
-      this.setState({ selectedEndStation: index });
+      this.setState({ endStation: id });
     }
   };
 
   render() {
-    const { stationOptions, selectedStartStation, selectedEndStation, highscoreResults } = this.state;
+    const { stations, startStation, endStation, highscoreResults } = this.state;
 
     const highscoreResultsElements = highscoreResults.map(function({ time, date }) {
       return (
@@ -129,6 +117,16 @@ class App extends Component {
         </li>
       );
     });
+
+    // Make a formatted station list for dropdown select
+    const stationOptions = stations
+      .map(function({ name, station_id }) {
+        return {
+          value: station_id,
+          label: name,
+        };
+      })
+      .sort(sortBy('label'));
 
     return (
       <div className="wrap">
@@ -144,8 +142,8 @@ class App extends Component {
             <br />
             <Select
               name="form-field-name"
-              value={selectedStartStation}
-              onChange={option => option && this.setState({ selectedStartStation: option.value })}
+              value={startStation}
+              onChange={option => option && this.setState({ startStation: option.value })}
               options={stationOptions}
             />
             <br />
@@ -156,21 +154,29 @@ class App extends Component {
             <br />
             <Select
               name="form-field-name"
-              value={selectedEndStation}
-              onChange={option => option && this.setState({ selectedEndStation: option.value })}
+              value={endStation}
+              onChange={option => option && this.setState({ endStation: option.value })}
               options={stationOptions}
             />
             <h3>Distance</h3>
             <p>0,46 km</p>
             <HighScore />
-            <ul>{highscoreResultsElements}</ul>
-            {/* 
-            <h3>All time fastest average ⚡</h3>
+            <ul>resultselements {highscoreResultsElements}</ul>
+            <h3>
+              All time fastest average{' '}
+              <span role="img" aria-label="Lightning">
+                ⚡
+              </span>
+            </h3>
             <ul>
-              <li>37 km/h (Spikersuppa → Bygdøy, 22. mars 2017) 🚨🚔👮</li>
+              <li>
+                37 km/h (Spikersuppa → Bygdøy, 22. mars 2017){' '}
+                <span role="img" aria-label="Police">
+                  🚨🚔👮
+                </span>
+              </li>
               <li>24 km/h (Botanisk hage → Stortinget, 28. mars 2017</li>
             </ul>
-            */}
           </div>
         </div>
         <div className="col-50">

@@ -5,6 +5,8 @@ import data from '../../shared/data/trips-1018';
 
 module.exports.getHighscore = function(req, res) {
   const { startStation, endStation } = req.body;
+  console.log('data trips:', data.trips);
+  console.log('startStation:', startStation, ' - endStation:', endStation);
   const results = data.trips
     .filter(trip => {
       return trip.start_station_id == startStation && trip.end_station_id == endStation;

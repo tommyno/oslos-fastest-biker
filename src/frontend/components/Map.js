@@ -29,7 +29,11 @@ const Map = React.memo(function Map(props) {
 
   // Show popup on map
   const renderPopup = () => {
-    const { name, lon, lat } = stations[selectedStation];
+    const popupStation = stations.find(station => {
+      return station.station_id === selectedStation;
+    });
+
+    const { name, lon, lat } = popupStation;
 
     return (
       <Fragment>
@@ -54,8 +58,7 @@ const Map = React.memo(function Map(props) {
       }}
     >
       <Layer type="symbol" id="marker" layout={{ 'icon-image': 'bicycle-15' }}>
-        {stations.map((station, index) => {
-          const { station_id, lat, lon } = station;
+        {stations.map(({ station_id, lat, lon }) => {
           return (
             <Feature
               key={station_id}
@@ -67,7 +70,7 @@ const Map = React.memo(function Map(props) {
                 handleMarkerHover(e);
               }}
               onClick={() => {
-                handleMapMarkerClick(index);
+                handleMapMarkerClick(station_id);
               }}
             />
           );

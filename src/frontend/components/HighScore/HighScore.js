@@ -3,7 +3,7 @@ import './HighScore.scss';
 
 const HighScore = props => {
   return (
-    <div className="high-score-board font--arcade">
+    <div className="high-score-board">
       <h2 className="high-score-board__header">High score</h2>
       <ol>
         <li>First</li>

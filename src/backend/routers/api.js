@@ -1,5 +1,5 @@
 const { getHighscore } = require('../controllers/getHighscore');
-const { getStations } = require('../controllers/stations');
+const { getStations } = require('../controllers/getStations');
 const { getDistance } = require('../controllers/getDistance');
 const express = require('express');
 
