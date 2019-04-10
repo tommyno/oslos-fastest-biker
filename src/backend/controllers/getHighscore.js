@@ -1,23 +1,31 @@
 import differenceInSeconds from 'date-fns/difference_in_seconds';
 import sortBy from 'sort-by';
 
-import data from '../../shared/data/trips-1018';
+import tripData from '../../shared/data/trips-2019-04.json';
 
 module.exports.getHighscore = function(req, res) {
   const { startStation, endStation } = req.body;
-  console.log('data trips:', data.trips);
-  console.log('startStation:', startStation, ' - endStation:', endStation);
-  const results = data.trips
+
+  const results = tripData
+
+    // Find all matching trips
+    // Limit to first 10
+    // Return only 'duration' and 'started_at'
+    // Sort by 'duration'
+
+    // Filter out matching trips
     .filter(trip => {
       return trip.start_station_id == startStation && trip.end_station_id == endStation;
     })
+    // Format data before return
     .map(trip => {
       return {
-        date: trip.start_time,
-        time: differenceInSeconds(new Date(trip.end_time), new Date(trip.start_time)),
+        date: trip.started_at,
+        duration: trip.duration,
       };
     })
-    .sort(sortBy('-time'));
+    .sort(sortBy('duration'));
 
-  res.send(results);
+  // Return top 10 results
+  res.send(results.slice(0, 10));
 };

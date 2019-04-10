@@ -1,10 +1,6 @@
 import React, { Component } from 'react';
 import Select from 'react-select';
 import sortBy from 'sort-by';
-import { format } from 'date-fns';
-import nb from 'date-fns/locale/nb';
-
-import humanizeDuration from '../../shared/utils/humanize-duration';
 import { getBysykkelStations, getHighscoreByStations } from '../services/backend-api';
 
 import Map from './Map';
@@ -15,8 +11,8 @@ import 'react-select/dist/react-select.css';
 class App extends Component {
   state = {
     stations: [],
-    startStation: null,
-    endStation: null,
+    stationStart: null,
+    stationEnd: null,
     highscoreResults: [],
     mapSettings: {
       selectedStation: null,
@@ -34,26 +30,26 @@ class App extends Component {
   }
 
   async handlePopulateHighscore(prevProps, prevState) {
-    const { startStation, endStation } = this.state;
+    const { stationStart, stationEnd } = this.state;
 
-    const { startStation: prevStartStation, endStation: prevEndStation } = prevState;
+    const { stationStart: prevstationStart, stationEnd: prevstationEnd } = prevState;
 
     // Both stations should have a value
-    if (!startStation || !endStation) {
+    if (!stationStart || !stationEnd) {
       return;
     }
 
     // Start and stop can not be the same
-    if (startStation === endStation) {
+    if (stationStart === stationEnd) {
       return;
     }
 
     // Is there a change?
-    if (startStation === prevStartStation && endStation === prevEndStation) {
+    if (stationStart === prevstationStart && stationEnd === prevstationEnd) {
       return;
     }
 
-    const highscoreResults = await getHighscoreByStations(startStation, endStation);
+    const highscoreResults = await getHighscoreByStations(stationStart, stationEnd);
     this.setState({ highscoreResults });
   }
 
@@ -67,32 +63,32 @@ class App extends Component {
 
   // Swap station A and B
   handleSwapClick = () => {
-    const { startStation, endStation } = this.state;
+    const { stationStart, stationEnd } = this.state;
 
     // Both stations should have a value
-    if (!startStation || !endStation) {
+    if (!stationStart || !stationEnd) {
       return;
     }
 
     // Start and stop can not be the same
-    if (startStation === endStation) {
+    if (stationStart === stationEnd) {
       return;
     }
 
-    const prevStartStation = startStation;
-    const prevEndStation = endStation;
+    const prevstationStart = stationStart;
+    const prevstationEnd = stationEnd;
     this.setState({
-      startStation: prevEndStation,
-      endStation: prevStartStation,
+      stationStart: prevstationEnd,
+      stationEnd: prevstationStart,
     });
   };
 
   // Handle marker click on map
   handleMapMarkerClick = id => {
-    const { startStation, stations } = this.state;
+    const { stationStart, stations } = this.state;
 
-    const selectedStation = stations.find(station => {
-      return station.station_id === id;
+    const selectedStation = stations.find(({ station_id }) => {
+      return station_id === id;
     });
 
     const { lon, lat } = selectedStation;
@@ -100,23 +96,15 @@ class App extends Component {
       mapSettings: { selectedStation: id, zoomLevel: 14, center: [lon, lat] },
     });
 
-    if (startStation === null) {
-      this.setState({ startStation: id });
+    if (stationStart === null) {
+      this.setState({ stationStart: id });
     } else {
-      this.setState({ endStation: id });
+      this.setState({ stationEnd: id });
     }
   };
 
   render() {
-    const { stations, startStation, endStation, highscoreResults } = this.state;
-
-    const highscoreResultsElements = highscoreResults.map(function({ time, date }) {
-      return (
-        <li>
-          {humanizeDuration(time)} ({format(new Date(date), 'DD. MMM YYYY', { locale: nb })})
-        </li>
-      );
-    });
+    const { stations, stationStart, stationEnd, highscoreResults } = this.state;
 
     // Make a formatted station list for dropdown select
     const stationOptions = stations
@@ -142,8 +130,8 @@ class App extends Component {
             <br />
             <Select
               name="form-field-name"
-              value={startStation}
-              onChange={option => option && this.setState({ startStation: option.value })}
+              value={stationStart}
+              onChange={option => option && this.setState({ stationStart: option.value })}
               options={stationOptions}
             />
             <br />
@@ -154,14 +142,13 @@ class App extends Component {
             <br />
             <Select
               name="form-field-name"
-              value={endStation}
-              onChange={option => option && this.setState({ endStation: option.value })}
+              value={stationEnd}
+              onChange={option => option && this.setState({ stationEnd: option.value })}
               options={stationOptions}
             />
             <h3>Distance</h3>
             <p>0,46 km</p>
-            <HighScore />
-            <ul>resultselements {highscoreResultsElements}</ul>
+            {stationStart && stationEnd && <HighScore results={highscoreResults} />}
             <h3>
               All time fastest average{' '}
               <span role="img" aria-label="Lightning">

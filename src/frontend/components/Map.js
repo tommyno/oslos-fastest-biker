@@ -29,8 +29,8 @@ const Map = React.memo(function Map(props) {
 
   // Show popup on map
   const renderPopup = () => {
-    const popupStation = stations.find(station => {
-      return station.station_id === selectedStation;
+    const popupStation = stations.find(({ station_id }) => {
+      return station_id === selectedStation;
     });
 
     const { name, lon, lat } = popupStation;
