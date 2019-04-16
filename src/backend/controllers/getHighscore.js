@@ -1,7 +1,7 @@
 import differenceInSeconds from 'date-fns/difference_in_seconds';
 import sortBy from 'sort-by';
 
-import tripData from '../../shared/data/trips-2019-04.json';
+import tripData from '../../shared/data/04.json';
 
 module.exports.getHighscore = function(req, res) {
   const { stationStart, stationEnd } = req.body;
