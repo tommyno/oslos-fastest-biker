@@ -178,7 +178,7 @@ class App extends Component {
               options={stationOptions}
             />
             {distance && <Distance distance={distance} />}
-            {stationStart && stationEnd && <HighScore results={highscoreResults} />}
+            {stationStart && stationEnd && <HighScore results={highscoreResults} distance={distance} />}
             <h3>
               All time fastest average{' '}
               <span role="img" aria-label="Lightning">

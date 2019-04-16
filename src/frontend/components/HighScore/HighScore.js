@@ -3,10 +3,11 @@ import { format } from 'date-fns';
 import nb from 'date-fns/locale/nb';
 
 import humanizeDuration from '../../../shared/utils/humanize-duration';
+import averageSpeed from '../../../shared/utils/average-speed';
 
 import './HighScore.scss';
 
-const HighScore = ({ results }) => {
+const HighScore = ({ results, distance }) => {
   function Results() {
     if (!results.length) {
       return <p>Ingen turer til nå. Hva venter du på? ;)</p>;
@@ -15,7 +16,8 @@ const HighScore = ({ results }) => {
     const list = results.map(function({ duration, date }, index) {
       return (
         <li key={index}>
-          {humanizeDuration(duration)} ({format(new Date(date), 'DD. MMM YYYY', { locale: nb })})
+          {humanizeDuration(duration)} ({format(new Date(date), 'DD. MMM YYYY', { locale: nb })}){' '}
+          {averageSpeed(distance, duration)}
         </li>
       );
     });
