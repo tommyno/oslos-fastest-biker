@@ -35,8 +35,6 @@ class App extends Component {
   async handlePopulateHighscore(prevProps, prevState) {
     const { stationStart, stationEnd } = this.state;
 
-    const { stationStart: prevstationStart, stationEnd: prevstationEnd } = prevState;
-
     // Both stations should have a value
     if (!stationStart || !stationEnd) {
       return;
@@ -48,7 +46,7 @@ class App extends Component {
     }
 
     // Is there a change?
-    if (stationStart === prevstationStart && stationEnd === prevstationEnd) {
+    if (stationStart === prevState.stationStart && stationEnd === prevState.stationEnd) {
       return;
     }
 
@@ -59,8 +57,6 @@ class App extends Component {
   async handleCalculateDistance(prevProps, prevState) {
     const { stationStart, stationEnd, stations } = this.state;
 
-    const { stationStart: prevstationStart, stationEnd: prevstationEnd } = prevState;
-
     // Both stations should have a value
     if (!stationStart || !stationEnd) {
       return;
@@ -72,7 +68,7 @@ class App extends Component {
     }
 
     // Is there a change?
-    if (stationStart === prevstationStart && stationEnd === prevstationEnd) {
+    if (stationStart === prevState.stationStart && stationEnd === prevState.stationEnd) {
       return;
     }
 
