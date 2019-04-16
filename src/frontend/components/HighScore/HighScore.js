@@ -16,7 +16,7 @@ const HighScore = ({ results, distance }) => {
     const list = results.map(function({ duration, date }, index) {
       return (
         <li key={index}>
-          {humanizeDuration(duration)} ({format(new Date(date), 'DD. MMM YYYY', { locale: nb })}){' '}
+          {humanizeDuration(duration)} ({format(new Date(date), 'DD. MMM, HH:mm', { locale: nb })}){' '}
           {averageSpeed(distance, duration)}
         </li>
       );
