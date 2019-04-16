@@ -8,7 +8,7 @@ const apiRouter = express();
 
 // Custom API endpoints
 apiRouter.post('/highscore', getHighscore);
-apiRouter.get('/distance', getDistance);
+apiRouter.post('/distance', getDistance);
 apiRouter.get('/stations', getStations);
 
 module.exports = apiRouter;

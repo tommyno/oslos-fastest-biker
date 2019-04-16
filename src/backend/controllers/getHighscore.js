@@ -8,11 +8,6 @@ module.exports.getHighscore = function(req, res) {
 
   const results = tripData
 
-    // Find all matching trips
-    // Limit to first 10
-    // Return only 'duration' and 'started_at'
-    // Sort by 'duration'
-
     // Filter out matching trips
     .filter(trip => {
       return trip.start_station_id == startStation && trip.end_station_id == endStation;

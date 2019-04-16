@@ -10,10 +10,18 @@ export async function getBysykkelStations() {
   return data;
 }
 
-export async function getHighscoreByStations(startStation, endStation) {
+export async function getHighscoreByStations(stationStart, stationEnd) {
   const { data } = await backendApi.post('/highscore', {
-    startStation,
-    endStation,
+    stationStart,
+    stationEnd,
+  });
+  return data;
+}
+
+export async function getDistance(stationStart, stationEnd) {
+  const { data } = await backendApi.post('/distance', {
+    stationStart,
+    stationEnd,
   });
   return data;
 }

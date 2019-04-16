@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import Select from 'react-select';
 import sortBy from 'sort-by';
-import { getBysykkelStations, getHighscoreByStations } from '../services/backend-api';
+import { getBysykkelStations, getHighscoreByStations, getDistance } from '../services/backend-api';
 
 import Map from './Map';
 import HighScore from './HighScore';
+import Distance from './Distance';
 
 import 'react-select/dist/react-select.css';
 
@@ -13,6 +14,7 @@ class App extends Component {
     stations: [],
     stationStart: null,
     stationEnd: null,
+    distance: null,
     highscoreResults: [],
     mapSettings: {
       selectedStation: null,
@@ -27,6 +29,7 @@ class App extends Component {
 
   componentDidUpdate(prevProps, prevState) {
     this.handlePopulateHighscore(prevProps, prevState);
+    this.handleCalculateDistance(prevProps, prevState);
   }
 
   async handlePopulateHighscore(prevProps, prevState) {
@@ -53,7 +56,35 @@ class App extends Component {
     this.setState({ highscoreResults });
   }
 
-  // Get all stations and sort by name
+  async handleCalculateDistance(prevProps, prevState) {
+    const { stationStart, stationEnd, stations } = this.state;
+
+    const { stationStart: prevstationStart, stationEnd: prevstationEnd } = prevState;
+
+    // Both stations should have a value
+    if (!stationStart || !stationEnd) {
+      return;
+    }
+
+    // Start and stop can not be the same
+    if (stationStart === stationEnd) {
+      return;
+    }
+
+    // Is there a change?
+    if (stationStart === prevstationStart && stationEnd === prevstationEnd) {
+      return;
+    }
+
+    // Get full station info for needed coordinates
+    const stationA = stations.find(station => station.station_id === stationStart);
+    const stationB = stations.find(station => station.station_id === stationEnd);
+
+    const { distance } = await getDistance(stationA, stationB);
+    this.setState({ distance });
+  }
+
+  // Get all stations
   async getAllStations() {
     const stations = await getBysykkelStations();
     if (stations) {
@@ -104,7 +135,7 @@ class App extends Component {
   };
 
   render() {
-    const { stations, stationStart, stationEnd, highscoreResults } = this.state;
+    const { stations, stationStart, stationEnd, highscoreResults, distance } = this.state;
 
     // Make a formatted station list for dropdown select
     const stationOptions = stations
@@ -146,8 +177,7 @@ class App extends Component {
               onChange={option => option && this.setState({ stationEnd: option.value })}
               options={stationOptions}
             />
-            <h3>Distance</h3>
-            <p>0,46 km</p>
+            {distance && <Distance distance={distance} />}
             {stationStart && stationEnd && <HighScore results={highscoreResults} />}
             <h3>
               All time fastest average{' '}
