@@ -4,13 +4,13 @@ import sortBy from 'sort-by';
 import tripData from '../../shared/data/trips-2019-04.json';
 
 module.exports.getHighscore = function(req, res) {
-  const { startStation, endStation } = req.body;
+  const { stationStart, stationEnd } = req.body;
 
   const results = tripData
 
     // Filter out matching trips
     .filter(trip => {
-      return trip.start_station_id == startStation && trip.end_station_id == endStation;
+      return trip.start_station_id === stationStart && trip.end_station_id === stationEnd;
     })
     // Format data before return
     .map(trip => {
